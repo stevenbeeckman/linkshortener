@@ -47,7 +47,7 @@ public class LinkRedirectController {
 		if(linkRedirect != null && !linkRedirect.getLongUrl().isEmpty()) {
 			linkRedirect.setNumberOfVisits(linkRedirect.getNumberOfVisits() + 1);
 			linkRedirectService.save(linkRedirect);
-			return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION, linkRedirect.getLongUrl()).build();
+			return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).header(HttpHeaders.LOCATION, linkRedirect.getLongUrl()).header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate").build();
 		}else {
 			// if not found throw 404
 			/*
