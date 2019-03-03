@@ -1,0 +1,75 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="/lib/bootstrap/4.3.1/css/bootstrap.min.css">
+		<title>Link Shortener Admin Page</title>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm">
+					<h1>Link Shortener Administration Page</h1>
+				</div>
+			</div>
+			<div id="app">
+				<a href="/admin/redirect/new" role="button" class="btn btn-primary sticky-top float-right" >Add new link redirect</a>
+				<h2>Shortened Links</h2>
+				<div class="row">
+					<div class="col">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Short Link</th>
+									<th>Long URL</th>
+									<th>Author</th>
+									<th>Number of visits</th>
+									<th>Active</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr is="linkredirect"
+									v-for="linkredirect in linkredirectlist"
+									v-bind:linkredirect="linkredirect"
+									v-bind:key="linkredirect.shorturl"
+								></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<form></form>
+			</div>
+			
+
+		</div>
+		
+		<script src="/lib/vue/2.6.8/vue.js"></script>
+		<script>
+			Vue.component('linkredirect', {
+				props: ['linkredirect']
+				, template: '<tr><td><a :href="linkredirect.shortUrl" target="_blank">/{{ linkredirect.shortUrl }}</a></td><td><a :href="linkredirect.longUrl" target="_blank">{{ linkredirect.longUrl }}</a></td><td>{{ linkredirect.author }}</td><td>{{ linkredirect.numberOfVisits }}</td><td>{{ linkredirect.active }}</td></tr>'
+			});
+		
+			var app = new Vue({
+				el: "#app"
+				, data: {
+					linkredirectlist: ''
+					, newLinkRedirect: ''
+					, showModal: false
+				}, created: function() {
+					var vm = this;
+					fetch('/admin/api/linkredirects')
+						.then(function(response) { if(response.status == 200) { return response.json();} else { console.log("Response wasn't OK. Returning sample data."); return [
+							{shortUrl: 'go', longUrl: 'https://www.google.com', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
+							, {shortUrl: 'medicalcare', longUrl: 'http://intranet.mil.intra/sites/budfin/2014%20web%20pages/Medical%20Care.aspx', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
+						];} })
+						.then(function(data){ vm.linkredirectlist = data; })
+						.catch(function(err) { console.log(err); })
+				}
+			});
+			
+			
+		</script>
+	</body>
+</html>

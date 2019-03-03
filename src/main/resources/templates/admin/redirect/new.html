@@ -1,0 +1,95 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="/lib/bootstrap/4.3.1/css/bootstrap.min.css">
+		<title>Create New Link Redirect</title>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm">
+					<h1>Link Shortener Administration Page</h1>
+				</div>
+			</div>
+			<hr>
+			<div id="app">
+				<h3>Create New Link Redirect</h3>
+				<div class="row">
+					<div class="col">
+						<form>
+							<div class="form-group">
+								<label for="longUrlInput">Long URL</label>
+								<input type="url" class="form-control" name="longUrl" id="longUrlInput" aria-describedBy="longUrlHelp" placeholder="https://averylong.url/to/shorten" required>
+								<small id="longUrlHelp" class="form-text text-muted">This long URL will be shortened.</small>
+							</div>
+							<div class="form-group">
+								<label for="shortUrlInput">Short URL</label>
+								<input type="text" class="form-control" name="shortUrl" id="shortUrlInput" aria-describedBy="shortUrlHelp" placeholder="slug" v-model="shortUrl" required>
+								<small id="shortUrlHelp" class="form-text text-muted">The long URL will be translated into <code><span>https://{{ shortenerDomain }}/{{ shortUrl }}</span></code>.</small>
+							</div>
+							<div class="form-group">
+								<label for="authorInput">Author</label>
+								<input type="text" class="form-control" name="author" id="authorInput" aria-describedBy="authorHelp" placeholder="Jane.Doe@marinecorps.mil" required>
+								<small id="authorHelp" class="form-text text-muted">The email address of the author of this link redirect.</small>
+							</div>
+							<div class="form-group form-check">
+								<input type="checkbox" class="form-check-input" name="active" id="activeInput" checked>
+								<label class="form-check-label" for="activeInput">Link redirect will be active</label>
+							</div>
+							<span class="btn btn-primary submit-button">Submit</span>
+						</form>
+					</div>
+				</div>
+				<form></form>
+			</div>
+			
+
+		</div>
+		
+		
+		<script src="/lib/jquery/3.3.1/jquery-3.3.1.min.js"></script>
+		<script src="/lib/vue/2.6.8/vue.js"></script>
+		<script>
+		
+			/* set the variable shortenerDomain to your domain */
+		
+			var app = new Vue({
+				el: "#app"
+				, data: {
+					shortUrl: ''
+					, shortenerDomain: "sho.rt"
+				}
+			});
+			
+			var submitButton = document.querySelector(".submit-button");
+			submitButton.addEventListener("click", sendNewLinkRedirect);
+			
+			$(document).ready(function() {
+				
+				
+			});
+			
+			function sendNewLinkRedirect(){
+				let form_inputs = {};
+				form_inputs.longUrl = $("#longUrlInput").val();
+				form_inputs.shortUrl = $("#shortUrlInput").val();
+				form_inputs.author = $("#authorInput").val();
+				form_inputs.active = $("#activeInput").val() == "on" ? true : false;
+				console.dir(form_inputs);
+				$.ajax({method: "POST", url: "/admin/redirect/new", data: JSON.stringify(form_inputs), dataType: "json", processData: false, contentType: "application/json",  success: redirectToAdminPage, error: handleErrorSubmittingNewLinkRedirect })
+			}
+			
+			function redirectToAdminPage(){
+				window.location.replace("/admin");
+			} 
+			
+			function handleErrorSubmittingNewLinkRedirect(jqXHR, textStatus, errorThrown){
+				$("form").append("<div class='alert alert-danger' role='alert'>An error occurred: " + textStatus + " " + errorThrown + "</div>");
+			}
+
+			
+		</script>
+	</body>
+</html>
