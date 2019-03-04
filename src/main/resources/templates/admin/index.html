@@ -43,8 +43,8 @@
 			
 
 		</div>
-		
-		<script src="/lib/vue/2.6.8/vue.js"></script>
+		<script src="/lib/jquery/3.3.1/jquery-3.3.1.min.js"></script>
+		<script src="/lib/vue/2.6.8/vue.min.js"></script>
 		<script>
 			Vue.component('linkredirect', {
 				props: ['linkredirect']
@@ -59,13 +59,23 @@
 					, showModal: false
 				}, created: function() {
 					var vm = this;
-					fetch('/admin/api/linkredirects')
+					$.getJSON('/admin/api/linkredirects', function(data, status, xhr){ 
+						if(status == "success"){
+							vm.linkredirectlist = data;
+						}else{
+							vm.linkredirectlist = [
+								{shortUrl: 'go', longUrl: 'https://www.google.com', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
+								, {shortUrl: 'medicalcare', longUrl: 'http://intranet.mil.intra/sites/budfin/2014%20web%20pages/Medical%20Care.aspx', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
+							];
+						}
+					});
+					/*fetch('/admin/api/linkredirects')
 						.then(function(response) { if(response.status == 200) { return response.json();} else { console.log("Response wasn't OK. Returning sample data."); return [
 							{shortUrl: 'go', longUrl: 'https://www.google.com', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
 							, {shortUrl: 'medicalcare', longUrl: 'http://intranet.mil.intra/sites/budfin/2014%20web%20pages/Medical%20Care.aspx', author: 'Steven Beeckman', numberOfVisits: 0, active: true}
 						];} })
 						.then(function(data){ vm.linkredirectlist = data; })
-						.catch(function(err) { console.log(err); })
+						.catch(function(err) { console.log(err); });*/
 				}
 			});
 			
